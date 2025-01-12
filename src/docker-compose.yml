@@ -1,0 +1,42 @@
+services:
+  api-gateway:
+    build:
+      context: ./BookLinkServer/api-gateway
+    ports:
+      - "4001:4001" 
+    depends_on:
+      - user-service
+    networks:
+      - booknet
+
+  book-search:
+    build:
+      context: ./BookLinkServer/book-search
+    ports:
+      - "4000:4000" 
+    networks:
+      - booknet
+
+  user-service:
+    build:
+      context: ./BookLinkServer/user-service
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./BookLinkServer/user-service/.env   
+    networks:
+      - booknet 
+
+  frontend:
+    build:
+      context: ./BookLinkCliente
+    ports:
+      - "3000:80"  
+    depends_on:
+      - api-gateway
+    networks:
+      - booknet
+
+networks:
+  booknet:
+    driver: bridge
